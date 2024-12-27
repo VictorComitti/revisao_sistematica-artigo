@@ -1,9 +1,11 @@
 library(readxl)
-library(dlyr)
+library(dplyr)
 library(ggplot2)
 library(data.table)
 library(tidyverse)
 library(stringr)
+
+dados <- read_excel("Revisão Sistemática - Brand personality.xlsx")
 
 # Figura 1 ---------------------------------------------------------------------
 
@@ -45,4 +47,17 @@ ggplot(frequencia, aes(x = reorder(País, n), y = n)) +
   geom_text(aes(label = n), hjust = -0.1, size = 3.5, color = "black") +
   coord_flip() +
   labs(title = "", x = "País", y = "Frequência") +
+  theme_minimal()
+
+# Figura 3 ---------------------------------------------------------------------
+
+dados %>%
+  count(Abordagem) %>%
+  drop_na() %>% 
+  mutate(Frequencia_Relativa = n / sum(n) * 100) %>%
+  ggplot(aes(x = reorder(Abordagem, Frequencia_Relativa), y = Frequencia_Relativa)) +
+  geom_col() +
+  geom_text(aes(label = paste0(round(Frequencia_Relativa, 2), "%")), hjust = -0.1) +
+  coord_flip() +
+  labs(title = "Distribuição das Abordagens (%)", x = "Abordagem", y = "Frequência Relativa (%)") +
   theme_minimal()
